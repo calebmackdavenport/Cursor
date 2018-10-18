@@ -6,5 +6,4 @@
 - Navigate to executable's directory
 - Run "Cursor" to get a list of commands
 
-- To output a response to a file, simply use ">"
-- Cursor position > Position.csv
+- To output a response to a file, simply use ">" (ex: Cursor position > Position.csv)
