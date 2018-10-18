@@ -2,6 +2,8 @@ namespace MouseMover
 {
     public class MouseSimulator
     {
+	// Must be located in a local directory as CMD does not support UNC paths as current directory
+	// because it makes User32.dll inaccessible
         [DllImport("user32.dll", SetLastError = true)]
         static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
         [DllImport("user32.dll")]
@@ -9,7 +11,6 @@ namespace MouseMover
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetCursorPos(out POINT lpPoint);
-        //----//
         [DllImport("user32.dll")]
         public static extern bool ClientToScreen(IntPtr hWnd, ref POINT lpPoint);
         [DllImport("user32.dll")]
@@ -35,10 +36,8 @@ namespace MouseMover
         {
             [FieldOffset(0)]
             public MouseInputData mi;
-
             [FieldOffset(0)]
             public KEYBDINPUT ki;
-
             [FieldOffset(0)]
             public HARDWAREINPUT hi;
         }
@@ -117,7 +116,6 @@ namespace MouseMover
             InputKeyboard,
             InputHardware
         }
-		
 		enum SystemMetric
 		{
 		  SM_CXSCREEN = 0,
@@ -166,8 +164,7 @@ namespace MouseMover
             mouseInput.mkhi.mi.dwFlags =  MouseEventFlags.MOUSEEVENTF_LEFTDOWN;
             SendInput(1, ref mouseInput, Marshal.SizeOf(mouseInput));
 
-            //does not work with MouseEventFlags.MOUSEEVENTF_MOVE | MouseEventFlags.MOUSEEVENTF_LEFTDOWN
-            // so two consec. send inputs
+            //does not work with MouseEventFlags.MOUSEEVENTF_MOVE | MouseEventFlags.MOUSEEVENTF_LEFTDOWN so two consec. send inputs
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_MOVE;
             mouseInput.mkhi.mi.dx = CalculateAbsoluteCoordinateX(x);
             mouseInput.mkhi.mi.dy = CalculateAbsoluteCoordinateY(y);
@@ -191,10 +188,8 @@ namespace MouseMover
             mouseInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_LEFTUP;
             SendInput(1, ref mouseInput, Marshal.SizeOf(mouseInput));
         }
-        
-
-        //There's conflict between negative DWOR values and UInt32 so there are two methods
-        // for scrolling
+       
+        //There's conflict between negative DWOR values and UInt32 so there are two methods for scrolling
         static void ScrollUp(int amount) {
             INPUT mouseInput = new INPUT();
             mouseInput.type = SendInputEventType.InputMouse;
